@@ -12,90 +12,86 @@ namespace lab1
         static void Main(string[] args)
         {
             DbInitializer.Initialize(db);
-
-            WriteLine("1.	Выборка всех данных из таблицы, стоящей в схеме базы данных нас стороне отношения «один»");
-            List<Discount> discounts = db.Discounts.ToList();
-            WriteLine("Скидки:");
-            foreach (Discount d in discounts)
-                WriteLine($"id : {d.Id} Скидка : {d.Rebate}%");
-
-            WriteLine("\n2.	Выборку данных из таблицы, стоящей в схеме базы данных нас стороне отношения «один», отфильтрованные по определенному условию, налагающему ограничения на одно или несколько полей");
-            discounts = db.Discounts.Where(p=>p.Rebate<15).ToList();
-            WriteLine("Скидки меньше 15%: ");
-            foreach (Discount d in discounts)
-                WriteLine($"id : {d.Id} Скидка : {d.Rebate}%");
-
-            WriteLine("\n3.	Выборку данных, сгруппированных по любому из полей данных с выводом какого-либо итогового результата (min, max, avg, сount или др.) по выбранному полю из таблицы, стоящей в схеме базы данных нас стороне отношения «многие»");
-            Write("Кол-во Продуктов производителя 'Колхоз Заря' : ");
-            WriteLine(db.Products.Where(p => p.Manufacturer == "Колхоз Заря").Count());
-
-            WriteLine("\n4.	Выборку данных из двух полей двух таблиц, связанных между собой отношением «один-ко-многим» ");
-            WriteLine("Товары со скидкой: ");
-            var list = db.Discounts.Join(db.Products, p => p.ProductId, c => c.Id, (p, c) => new { Name = c.Name, Rebate = p.Rebate });
-            foreach (var p in list)
-                WriteLine($"Продукт: {p.Name} Скидка: {p.Rebate}%");
-
-            WriteLine("\n5.	Выборку данных из двух таблиц, связанных между собой отношением «один-ко-многим» и отфильтрованным по некоторому условию, налагающему ограничения на значения одного или нескольких полей ");
-            WriteLine("Товары со скидкой меньше 15%");
-            list = db.Discounts.Join(db.Products, p => p.ProductId, c => c.Id, (p, c) => new { Name = c.Name, Rebate = p.Rebate }).Where(p=>p.Rebate<15);
-            foreach (var p in list)
-                WriteLine($"Продукт: {p.Name} Скидка: {p.Rebate}%");
-
-            WriteLine("6 и 8.	Вставка и удаление данных в таблицы, стоящей на стороне отношения «Один»");
-            discounts = db.Discounts.ToList();
-            WriteLine("Скидки до вставки:");
-            foreach (Discount d in discounts)
-                WriteLine($"id : {d.Id} Скидка : {d.Rebate}%");
-            Product product = db.Products.Where(p => p.Name == "чай").First();
-            Discount discount = new Discount() { Rebate = 70, ProductId = product.Id };
-            db.Discounts.Add(discount);
-            db.SaveChanges();
-            discounts = db.Discounts.ToList();
-            WriteLine("Скидки после вставки:");
-            foreach (Discount d in discounts)
-                WriteLine($"id : {d.Id} Скидка : {d.Rebate}%");
-            db.Discounts.Remove(discount);
-            db.SaveChanges();
-            WriteLine("Скидки удаления:");
-            discounts = db.Discounts.ToList();
-            foreach (Discount d in discounts)
-                WriteLine($"id : {d.Id} Скидка : {d.Rebate}%");
-
-            WriteLine("7 и 9.	Вставка и удаление данных в таблицы, стоящей на стороне отношения «Многие»");
-            WriteLine("Продукты до вставки: ");
+            WriteLine("1.	Выборку всех данных из таблицы, стоящей в схеме базы данных нас стороне отношения «один»\n");
+            WriteLine("Товары: ");
             var products = db.Products.ToList();
-            foreach (Product prod in products)
-                WriteLine($"Название: {prod.Name} Id: {prod.Id}");
-            Stock stock = db.Stocks.First();
-            product = new Product() { Name = "тестовое продукт", Stock = stock, Manufacturer = "Тестовый производитель" };
-            db.Products.Add(product);
-            db.SaveChanges();
-            WriteLine("Продукты после вставки: ");
-            products = db.Products.ToList();
-            foreach (Product prod in products)
-                WriteLine($"Название: {prod.Name} Id: {prod.Id}");
-            db.Products.Remove(product);
-            db.SaveChanges();
-            WriteLine("Продукты после удаления: ");
-            products = db.Products.ToList();
-            foreach (Product prod in products)
-                WriteLine($"Название: {prod.Name} Id: {prod.Id}");
+            foreach (Product product in products)
+                WriteLine($"Название: {product.Name} Производитель: {product.Manufacturer} Упаковка: {product.Packaging}");
 
-            WriteLine("10.	Обновление удовлетворяющих определенному условию записей в любой из таблиц базы данных ");
-            WriteLine("Скидки до обновления: ");
-            discounts = db.Discounts.ToList();
-            foreach (Discount d in discounts)
-                WriteLine($"Id: {d.Id} Скидка: {d.Rebate}");
-            discounts = db.Discounts.Where(p => p.Rebate < 10).ToList();
-            foreach (Discount d in discounts)
-                d.Rebate = 7;
+            WriteLine("\n2.	Выборку данных из таблицы, стоящей в схеме базы данных нас стороне отношения «один», отфильтрованные по определенному условию, налагающему ограничения на одно или несколько полей\n");
+            WriteLine("Товары,отфильтрованные по произвдителю 'Колхоз Заря'");
+            products = db.Products.Where(p => p.Manufacturer == "Колхоз Заря").ToList();
+            foreach (Product product in products)
+                WriteLine($"Название: {product.Name} Производитель: {product.Manufacturer} Упаковка: {product.Packaging}");
+
+            WriteLine("\n3.	Выборку данных, сгруппированных по любому из полей данных с выводом какого-либо итогового результата (min, max, avg, сount или др.) по выбранному полю из таблицы, стоящей в схеме базы данных нас стороне отношения «многие»\n");
+            Write("кол-во поставок за 01.02.2019 : ");
+            WriteLine(db.Stocks.Where(p => p.DateOfDelivery == "01.02.2019").Count());
+
+            WriteLine("\n4.	Выборку данных из двух полей двух таблиц, связанных между собой отношением «один-ко-многим» \n");
+            WriteLine("Поставки продуктов: ");
+            var list1=db.Products.Join(db.Stocks, p => p.Id, c => c.ProductId, (p, c) => new { Date = c.DateOfDelivery, c.Count, ProductName = p.Name, Packaging = p.Packaging });
+            foreach (var item in list1)
+                WriteLine($"Дата: {item.Date} Кол-во: {item.Count} Товар: {item.ProductName} Упаковка: {item.Packaging} ");
+
+            WriteLine("\n5.	Выборку данных из двух таблиц, связанных между собой отношением «один-ко-многим» и отфильтрованным по некоторому условию, налагающему ограничения на значения одного или нескольких полей \n");
+            WriteLine("Поставки продуктов за 01.02.2019 :");
+            list1 = db.Products.Join(db.Stocks, p => p.Id, c => c.ProductId, (p, c) => new { Date = c.DateOfDelivery, c.Count, ProductName = p.Name, Packaging = p.Packaging }).Where(p=>p.Date=="01.02.2019");
+            foreach (var item in list1)
+                WriteLine($"Дата: {item.Date} Кол-во: {item.Count} Товар: {item.ProductName} Упаковка: {item.Packaging} ");
+
+            WriteLine("\n 6 и 8.	Вставка и удаление данных в таблицы, стоящей на стороне отношения «Один>\n");
+            WriteLine("до добавления продуктов");
+            products = db.Products.ToList();
+            foreach (Product product in products)
+                WriteLine($"Название: {product.Name} Производитель: {product.Manufacturer} Упаковка: {product.Packaging}");
+            WriteLine("после добавления продуктов");
+            Product prod = new Product() { Name = "Тестовый продукт", Manufacturer = "1", Packaging = "1" };
+            db.Products.Add(prod);
             db.SaveChanges();
-            WriteLine("Скидки после обновления: ");
-            discounts = db.Discounts.ToList();
-            foreach (Discount d in discounts)
-                WriteLine($"Id: {d.Id} Скидка: {d.Rebate}");
+            products = db.Products.ToList();
+            foreach (Product product in products)
+                WriteLine($"Название: {product.Name} Производитель: {product.Manufacturer} Упаковка: {product.Packaging}");
+            WriteLine("после удаления продуктов");
+            db.Products.Remove(prod);
+            db.SaveChanges();
+            products = db.Products.ToList();
+            foreach (Product product in products)
+                WriteLine($"Название: {product.Name} Производитель: {product.Manufacturer} Упаковка: {product.Packaging}");
+
+            WriteLine("\n7 и 9.	Вставку и удаление данных в таблицы, стоящей на стороне отношения «Многие» \n");
+            WriteLine("до добавления поставки: ");
+            var stocks = db.Stocks.ToList();
+            foreach (Stock stock in stocks)
+                WriteLine($"Id: {stock.Id} id товара: {stock.ProductId} id поставщика: {stock.ProviderId} дата: {stock.DateOfDelivery}");
+            Stock st = new Stock() { DateOfDelivery = "01.01.2000", ProviderId = 1, ProductId = 1 };
+            db.Stocks.Add(st);
+            db.SaveChanges();
+            WriteLine("после добавления поставки: ");
+            stocks = db.Stocks.ToList();
+            foreach (Stock stock in stocks)
+                WriteLine($"Id: {stock.Id} id товара: {stock.ProductId} id поставщика: {stock.ProviderId} дата: {stock.DateOfDelivery}");
+            db.Stocks.Remove(st);
+            db.SaveChanges();
+            WriteLine("после удаления поставки: ");
+            stocks = db.Stocks.ToList();
+            foreach (Stock stock in stocks)
+                WriteLine($"Id: {stock.Id} id товара: {stock.ProductId} id поставщика: {stock.ProviderId} дата: {stock.DateOfDelivery}");
+
+            WriteLine("\n10.	Обновление удовлетворяющих определенному условию записей в любой из таблиц базы данных\n");
+            WriteLine("поставки до обновления");
+            stocks = db.Stocks.ToList();
+            foreach (Stock stock in stocks)
+                WriteLine($"Id: {stock.Id} id товара: {stock.ProductId} кол-во: {stock.Count} дата: {stock.DateOfDelivery}");
+            stocks = db.Stocks.Where(p => p.Count < 100).ToList();
+            foreach (Stock stock in stocks)
+                stock.Count = 77;
+            db.SaveChanges();
+            WriteLine("поставки после обновления");
+            stocks = db.Stocks.ToList();
+            foreach (Stock stock in stocks)
+                WriteLine($"Id: {stock.Id} id товара: {stock.ProductId} кол-во: {stock.Count} дата: {stock.DateOfDelivery}");
             ReadKey();
-
         }
     }
 }

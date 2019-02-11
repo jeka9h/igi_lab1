@@ -10,8 +10,8 @@ namespace lab1.Data
     public class StockContext:DbContext
     {
         public DbSet<Product> Products { get; set; }
-        public DbSet<Discount> Discounts { get; set; }
         public DbSet<Stock> Stocks { get; set; }
+        public DbSet<Provider> Providers { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var builder = new ConfigurationBuilder();
